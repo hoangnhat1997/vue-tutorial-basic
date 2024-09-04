@@ -64,6 +64,8 @@ export default {
 h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #007bff;
+  font-weight: bold;
 }
 
 .form-group {
@@ -73,6 +75,8 @@ h2 {
 label {
   display: block;
   margin-bottom: 5px;
+  color: #007bff;
+  font-weight: bold;
 }
 
 input[type='text'],
