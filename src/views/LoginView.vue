@@ -24,27 +24,51 @@
         />
       </div>
 
-      <button type="submit">Login</button>
+      <button type="submit" :disabled="loading">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </button>
     </form>
+
+    <p v-if="error" class="error-message">{{ error }}</p>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      loading: false,
+      error: null
     }
   },
   methods: {
-    handleSubmit() {
+    async handleSubmit() {
       if (this.username && this.password) {
-        // Here you can handle the login logic, such as calling an API
-        console.log('Logging in with:', this.username, this.password)
-        alert(`Username: ${this.username}\nPassword: ${this.password}`)
+        this.loading = true
+        this.error = null
+
+        try {
+          const response = await axios.post('https://example.com/api/login', {
+            username: this.username,
+            password: this.password
+          })
+
+          // Handle success, for example:
+          console.log('Login successful:', response.data)
+          alert('Login successful!') // Show success alert
+        } catch (error) {
+          // Handle error
+          console.error('Login failed:', error.response.data)
+          this.error = error.response?.data?.message || 'Login failed. Please try again.'
+        } finally {
+          this.loading = false
+        }
       } else {
-        alert('Please enter your username and password')
+        this.error = 'Please enter your username and password'
       }
     }
   }
@@ -64,8 +88,6 @@ export default {
 h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #007bff;
-  font-weight: bold;
 }
 
 .form-group {
@@ -75,8 +97,6 @@ h2 {
 label {
   display: block;
   margin-bottom: 5px;
-  color: #007bff;
-  font-weight: bold;
 }
 
 input[type='text'],
@@ -98,7 +118,14 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+button:disabled {
   background-color: #0056b3;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: red;
+  margin-top: 15px;
+  text-align: center;
 }
 </style>
